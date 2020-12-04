@@ -59,6 +59,11 @@ class SnowCloud:
         if (time.time() + self.ttl/2) > self.expires:
             self.renew()
 
+    def keep_renewed(self):
+        while True:
+            self.renew()
+            time.sleep(self.ttl/2)
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
@@ -66,6 +71,4 @@ if __name__ == "__main__":
     s = SnowCloud(os.getenv("SNOWCLOUD_URL"))
     s.register()
 
-    while True:
-        s.check_renew()
-        time.sleep(1)
+    s.keep_renewed()
