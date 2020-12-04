@@ -40,7 +40,8 @@ def index():
 
     else:
         snowflake = make_snowflake(cloud.worker_id)
-        return jsonify({"snowflake": snowflake})
+        return jsonify({"snowflake": snowflake,
+                        "snowflake_str": str(snowflake)})
 
 
 if __name__ == "__main__":
