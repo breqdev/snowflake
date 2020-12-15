@@ -1,57 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Snowflakes for all!</title>
+{% extends "base.html" %}
 
-    <script type="text/javascript">
-        function update_snowflake(data) {
-            snowflake_int = BigInt(data["snowflake_str"])
-            const epoch = 1577836800n  // Jan 1, 2020
+{% block content %}
+<script type="text/javascript">
+    function update_snowflake(data) {
+        snowflake_int = BigInt(data["snowflake_str"])
+        const epoch = 1577836800n  // Jan 1, 2020
 
-            let snowflake = document.getElementById("snowflake")
-            let timestamp = document.getElementById("timestamp")
-            let worker_id = document.getElementById("worker_id")
-            let increment = document.getElementById("increment")
+        let snowflake = document.getElementById("snowflake")
+        let timestamp = document.getElementById("timestamp")
+        let worker_id = document.getElementById("worker_id")
+        let increment = document.getElementById("increment")
 
-            snowflake.innerHTML = snowflake_int
-            timestamp_int = Number((snowflake_int >> 22n) + epoch*1000n)
-            timestamp_date = new Date(timestamp_int)
-            timestamp.innerHTML = timestamp_date.toUTCString()
-            worker_id.innerHTML = (snowflake_int & 0x3FF000n) >> 12n
-            increment.innerHTML = snowflake_int & 0xFFFn
-        }
+        snowflake.innerHTML = snowflake_int
+        timestamp_int = Number((snowflake_int >> 22n) + epoch*1000n)
+        timestamp_date = new Date(timestamp_int)
+        timestamp.innerHTML = timestamp_date.toUTCString()
+        worker_id.innerHTML = (snowflake_int & 0x3FF000n) >> 12n
+        increment.innerHTML = snowflake_int & 0xFFFn
+    }
 
-        window.onload = function() {
-            const url = "/"
+    window.onload = function() {
+        const url = "/"
 
-            fetch(url, {method: "POST"})
-            .then(response => response.json())
-            .then(data => {
-                update_snowflake(data)
-            })
-        }
-    </script>
+        fetch(url, {method: "POST"})
+        .then(response => response.json())
+        .then(data => {
+            update_snowflake(data)
+        })
+    }
+</script>
 
-</head>
-<body>
-    <h1>Snowflakes for all!</h1>
-    <p>We've generated a unique ID, just for you:</p>
-    <h3 id="snowflake">Generating...</h3>
-    <p>And here's how we came up with it:</p>
-    <table>
-        <tr>
-            <th>Timestamp</th>
-            <th>Worker ID</th>
-            <th>Increment</th>
-        </tr>
-        <tr>
-            <td id="timestamp">Loading...</td>
-            <td id="worker_id">Loading...</td>
-            <td id="increment">Loading...</td>
-        </tr>
-    </table>
-    <p>Pretty cool, right? But how can you bake this into your own project?</p>
-    <p>Send a POST request to this URL, and you'll receive a JSON response with your very own snowflake.</p>
-    <p>Look at the JavaScript source of this page for an example!</p>
-</body>
-</html>
+<h1>Snowflakes for all!</h1>
+<p>We've generated a unique ID, just for you:</p>
+<h3 id="snowflake">Generating...</h3>
+<p>And here's how we came up with it:</p>
+<table>
+    <tr>
+        <th>Timestamp</th>
+        <th>Worker ID</th>
+        <th>Increment</th>
+    </tr>
+    <tr>
+        <td id="timestamp">Loading...</td>
+        <td id="worker_id">Loading...</td>
+        <td id="increment">Loading...</td>
+    </tr>
+</table>
+<br>
+<p>Pretty cool, right? But how can you bake this into your own project?</p>
+<p>Send a POST request to this URL, and you'll receive a JSON response with your very own snowflake.</p>
+<p>Look at the JavaScript source of this page for an example!</p>
+
+<br><br><br><br><br><br>
+
+{% endblock %}
