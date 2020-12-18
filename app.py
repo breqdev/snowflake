@@ -39,7 +39,7 @@ def make_snowflake(worker_id):
 @cross_origin()
 def index():
     if request.method == "GET":
-        return redirect("https://breq.dev/showcase/snowflake")
+        return redirect("https://breq.dev/apps/snowflake")
 
     else:
         snowflake = make_snowflake(cloud.worker_id)
