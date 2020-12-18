@@ -3,7 +3,7 @@ import sys
 import time
 import threading
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, redirect, request, jsonify
 from flask_cors import CORS, cross_origin
 
 import snowcloud
@@ -39,7 +39,7 @@ def make_snowflake(worker_id):
 @cross_origin()
 def index():
     if request.method == "GET":
-        return render_template("index.html")
+        return redirect("https://breq.dev/showcase/snowflake")
 
     else:
         snowflake = make_snowflake(cloud.worker_id)
