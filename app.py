@@ -4,11 +4,13 @@ import time
 import threading
 
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS, cross_origin
 
 import snowcloud
 
 
 app = Flask(__name__)
+CORS(app)
 
 cloud = snowcloud.SnowCloud(os.getenv("SNOWCLOUD_URL"))
 cloud.register()
@@ -34,6 +36,7 @@ def make_snowflake(worker_id):
 
 
 @app.route("/", methods=["GET", "POST"])
+@cross_origin()
 def index():
     if request.method == "GET":
         return render_template("index.html")
