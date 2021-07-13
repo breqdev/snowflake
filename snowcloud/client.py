@@ -6,7 +6,9 @@ import logging
 import requests
 
 
-class SnowCloud:
+class Snowcloud:
+    EPOCH = 1577836800  # Jan 1, 2020
+
     def __init__(self, cloud, key=None):
         self.logger = logging.getLogger("snowcloud.SnowCloud")
 
@@ -17,6 +19,8 @@ class SnowCloud:
 
         self.key = key
         self.user = str(uuid.uuid4())
+
+        self.increment = 0
 
     def register(self):
         self.logger.info("Registering for worker ID")
@@ -64,11 +68,22 @@ class SnowCloud:
             self.renew()
             time.sleep(self.ttl/2)
 
+    def generate(self):
+        timestamp = int((time.time() - self.EPOCH) * 1000)
+
+        snowflake = timestamp << 22
+        snowflake |= self.worker_id << 12
+        snowflake |= self.increment
+
+        self.increment = (self.increment + 1) & 0xFFF
+
+        return snowflake
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
-    s = SnowCloud(os.getenv("SNOWCLOUD_URL"))
+    s = Snowcloud(os.getenv("SNOWCLOUD_URL"))
     s.register()
 
     s.keep_renewed()
