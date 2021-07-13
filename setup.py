@@ -8,5 +8,6 @@ setuptools.setup(
     author_email="breq@breq.dev",
     url="https://github.com/breq16/snowflake",
     packages=["snowcloud"],
-    python_requires=">=3.8"
+    python_requires=">=3.8",
+    install_requires=["requests"]
 )

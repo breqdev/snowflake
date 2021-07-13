@@ -2,8 +2,29 @@ import os
 import uuid
 import time
 import logging
+import threading
 
 import requests
+
+
+class SnowcloudRenewThread(threading.Thread):
+    def __init__(self, snowcloud):
+        super().__init__()
+        self.cloud = snowcloud
+        self.stop_event = threading.Event()
+
+    def run(self):
+        while not self.stopped():
+            self.stop_event.wait(self.cloud.ttl/2)
+            if self.stopped():
+                continue
+            self.cloud.renew()
+
+    def stop(self):
+        self.stop_event.set()
+
+    def stopped(self):
+        return self.stop_event.isSet()
 
 
 class Snowcloud:
@@ -21,6 +42,7 @@ class Snowcloud:
         self.user = str(uuid.uuid4())
 
         self.increment = 0
+        self.thread = None
 
     def register(self):
         self.logger.info("Registering for worker ID")
@@ -59,14 +81,12 @@ class Snowcloud:
             f"Renewed as {self.worker_id} "
             f"for {self.ttl} until {self.expires}")
 
-    def check_renew(self):
-        if (time.time() + self.ttl/2) > self.expires:
-            self.renew()
+    def start_autorenew(self):
+        self.thread = SnowcloudRenewThread(self)
+        self.thread.start()
 
-    def keep_renewed(self):
-        while True:
-            self.renew()
-            time.sleep(self.ttl/2)
+    def end_autorenew(self):
+        self.thread.stop()
 
     def generate(self):
         timestamp = int((time.time() - self.EPOCH) * 1000)

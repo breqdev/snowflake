@@ -1,21 +1,19 @@
 import os
 import sys
-import threading
 
 from flask import Flask, redirect, request, jsonify
 from flask_cors import CORS, cross_origin
 
-from snowcloud.client import Snowcloud
+from snowcloud.flask_ext import SnowcloudFlask
 
 
 app = Flask(__name__)
+
+app.config["SNOWCLOUD_KEY"] = os.environ["SNOWCLOUD_KEY"]
+app.config["SNOWCLOUD_URL"] = os.environ["SNOWCLOUD_URL"]
+
 CORS(app)
-
-cloud = Snowcloud(os.getenv("SNOWCLOUD_URL"))
-cloud.register()
-
-renew_thread = threading.Thread(target=cloud.keep_renewed)
-renew_thread.start()
+cloud = SnowcloudFlask(app)
 
 @app.route("/", methods=["GET", "POST"])
 @cross_origin()
