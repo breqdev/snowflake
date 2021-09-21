@@ -19,7 +19,7 @@ cloud = SnowcloudFlask(app)
 @cross_origin()
 def index():
     if request.method == "GET":
-        return redirect("https://breq.dev/apps/snowflake")
+        return redirect("https://breq.dev/apps/snowflake.html")
 
     else:
         snowflake = cloud.generate()
